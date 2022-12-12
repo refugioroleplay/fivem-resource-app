@@ -3,23 +3,17 @@
 </template>
 
 <script setup lang="ts">
-import useResource from "@/composables/useResource";
-import { useRouter } from "vue-router";
 import { ref } from "vue";
+import useResource from "@/composables/useResource";
 
-const router = useRouter();
-const render = ref(false);
 const { onNuiMessage } = useResource();
+const render = ref(false);
 
-onNuiMessage<{ render: boolean; locationName?: string }>(
-  "displayApp",
-  (data) => {
-    render.value = data.render;
-    if (data.locationName) {
-      router.push({
-        name: data.locationName,
-      });
-    }
-  }
-);
+interface NuiDisplayApp {
+  render: boolean;
+}
+
+onNuiMessage<NuiDisplayApp>("displayApp", (data) => {
+  render.value = data.render;
+});
 </script>
