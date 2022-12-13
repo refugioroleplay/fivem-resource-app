@@ -1,8 +1,14 @@
 {
   "name": "fivem-resource-app",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": false,
   "license": "MIT",
+  "author": "zkingboos",
+  "description": "A Vue.js 3 lib for creating FiveM NUI resources",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/refugioroleplay/fivem-resource-app"
+  },
   "files": [
     "dist"
   ],
@@ -16,7 +22,6 @@
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
-    "build:plugin": "tsc && vite build",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit"
