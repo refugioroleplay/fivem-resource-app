@@ -1,8 +1,4 @@
-import { inject } from "vue";
-
-interface OnNuiMessageCallback<T> {
-  (data: T): void;
-}
+import { computed, inject } from "vue";
 
 function injectOrThrow<T>(name: string): T {
   const injectResult = inject<T>(name);
@@ -14,20 +10,14 @@ function injectOrThrow<T>(name: string): T {
 
 export default function useResource() {
   const subscribeToNuiMessage = injectOrThrow<any>("subscribeToNuiMessage");
+  const resourceName = computed(() => GetParentResourceName());
 
-  function getResourceName() {
-    return GetParentResourceName();
-  }
-
-  function onNuiMessage<T>(
-    eventName: string,
-    callback: OnNuiMessageCallback<T>
-  ) {
+  function onNuiMessage<T>(eventName: string, callback: (data: T) => void) {
     subscribeToNuiMessage(eventName, callback);
   }
 
   function emulateNuiMessage(eventName: string, data: any) {
-    if (import.meta.env.FIVEM) {
+    if (isFivemEnvironment()) {
       return;
     }
 
@@ -44,6 +34,6 @@ export default function useResource() {
   return {
     onNuiMessage,
     emulateNuiMessage,
-    getResourceName,
+    resourceName,
   };
 }

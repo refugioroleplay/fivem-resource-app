@@ -1,24 +1,33 @@
 import { ref, type Plugin } from "vue";
+import { FivemResource } from "@/components";
+import useResource from "@/composables/useResource";
 
-export interface FivemResourcePluginOptions {
+interface FivemResourcePluginOptions {
   debug: boolean;
   defaultResourceName: string;
 }
 
+const defaultFivemResourcePluginOptions: FivemResourcePluginOptions = {
+  debug: false,
+  defaultResourceName: "fivem-resource-app",
+};
+
 const FivemResourcePlugin: Plugin = {
   install(app, pluginOptions: FivemResourcePluginOptions) {
-    if (window["GetParentResourceName"]) {
-      import.meta.env.FIVEM = true;
-      log("Running into FiveM environment mode");
-    }
-
     const options = Object.assign(
-      {
-        debug: true,
-        defaultResourceName: "development-fivem-resource-app",
-      },
+      defaultFivemResourcePluginOptions,
       pluginOptions
     );
+
+    const isFivemEnvironment = window["GetParentResourceName"] != null;
+    window.isFivemEnvironment = () => isFivemEnvironment;
+
+    if (isFivemEnvironment) {
+      log("Running into FiveM environment mode");
+    } else {
+      log("Running into Web environment mode");
+      window.GetParentResourceName = () => options.defaultResourceName;
+    }
 
     function log(...args: any[]) {
       if (options.debug) {
@@ -26,12 +35,9 @@ const FivemResourcePlugin: Plugin = {
       }
     }
 
-    if (!import.meta.env.FIVEM) {
-      window.GetParentResourceName = () => options.defaultResourceName;
-    }
-
     const nuiEventSubscribers = ref<Map<String, Array<Function>>>(new Map());
 
+    app.component("FivemResource", FivemResource);
     app.provide(
       "subscribeToNuiMessage",
       (eventName: string, callback: Function) => {
@@ -62,3 +68,4 @@ const FivemResourcePlugin: Plugin = {
 };
 
 export default FivemResourcePlugin;
+export { useResource, FivemResource };
