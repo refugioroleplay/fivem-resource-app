@@ -1,6 +1,6 @@
 import { ref, type Plugin } from "vue";
 import { FivemResource } from "@/components";
-import useResource from "@/composables/useResource";
+import useResource, { defineClientMessage } from "@/composables/useResource";
 
 interface FivemResourcePluginOptions {
   debug: boolean;
@@ -19,25 +19,23 @@ const FivemResourcePlugin: Plugin = {
       pluginOptions
     );
 
+    const log = (...args: any[]) => options.debug && console.log(...args);
+
     const isFivemEnvironment = window["GetParentResourceName"] != null;
     window.isFivemEnvironment = () => isFivemEnvironment;
+    window.isDevelopmentEnvironment = () => !isFivemEnvironment;
 
     if (isFivemEnvironment) {
       log("Running into FiveM environment mode");
     } else {
       log("Running into Web environment mode");
       window.GetParentResourceName = () => options.defaultResourceName;
-    }
-
-    function log(...args: any[]) {
-      if (options.debug) {
-        console.log(...args);
-      }
+      const mockRequestNuiToClient = ref<Map<String, Function>>(new Map());
+      app.provide("getMockRequestNuiToClient", mockRequestNuiToClient);
+      log("Registering mockRequestNuiToClient");
     }
 
     const nuiEventSubscribers = ref<Map<String, Array<Function>>>(new Map());
-
-    app.component("FivemResource", FivemResource);
     app.provide(
       "subscribeToNuiMessage",
       (eventName: string, callback: Function) => {
@@ -68,4 +66,4 @@ const FivemResourcePlugin: Plugin = {
 };
 
 export default FivemResourcePlugin;
-export { useResource, FivemResource };
+export { FivemResource, useResource, defineClientMessage };

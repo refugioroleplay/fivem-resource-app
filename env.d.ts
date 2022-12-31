@@ -2,3 +2,4 @@
 
 declare function GetParentResourceName(): string;
 declare function isFivemEnvironment(): boolean;
+declare function isDevelopmentEnvironment(): boolean;

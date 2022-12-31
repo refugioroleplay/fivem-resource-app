@@ -1,2 +1,3 @@
-import FivemResource from "./fivem-resource.vue";
-export { FivemResource };
+import FivemResource from "./FivemResource.vue";
+import FivemScreenRouter from "./FivemScreenRouter.vue";
+export { FivemResource, FivemScreenRouter };

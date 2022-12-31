@@ -6,8 +6,12 @@
 import { ref } from "vue";
 import useResource from "@/composables/useResource";
 
+const props = withDefaults(defineProps<{ renderInDevelopment?: boolean }>(), {
+  renderInDevelopment: true,
+});
+
 const { onNuiMessage } = useResource();
-const render = ref(false);
+const render = ref(isDevelopmentEnvironment() && props.renderInDevelopment);
 
 interface NuiDisplayApp {
   render: boolean;
