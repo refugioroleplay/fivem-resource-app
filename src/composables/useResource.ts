@@ -1,4 +1,4 @@
-import { computed, inject, onMounted } from "vue";
+import { computed, inject } from "vue";
 
 export function injectOrThrow<T>(name: string): T {
   const injectResult = inject<T>(name);
